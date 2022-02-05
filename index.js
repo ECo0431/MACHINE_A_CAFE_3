@@ -48,6 +48,7 @@ let prixBoisson = 0;
 let valeurPiece = 0;
 let total = 0;
 let totaux = 0;
+let boissonChoisi = false;
 // Ecran Machine à café
 const ECRAN = document.querySelector("#ecran");
 // Café avec animation
@@ -84,12 +85,14 @@ SONBOIRE.playbackRate = 1;
 function choixBoisson() {
   for (let i = 0; i < ALLBTNBOISSONS.length; i++) {
     ALLBTNBOISSONS[i].addEventListener("click", () => {
+      boissonChoisi = true;
       SONCLICBOUTON.play();
       prixBoisson = PRIXBOISSONS[i];
       console.log("Prix boisson " + prixBoisson);
       ECRAN.innerHTML = `
       <p>${NOMBOISSONS[i]} à ${prixBoisson} €</p>
     `;
+      console.log(boissonChoisi);
       calculPiecesInsere(prixBoisson, valeurPiece);
     });
   }
@@ -101,10 +104,13 @@ choixBoisson();
 function choixPieces() {
   for (let i = 0; i < ALLBTNPIECES.length; i++) {
     ALLBTNPIECES[i].addEventListener("click", () => {
-      SONINSEREPIECE.play();
-      valeurPiece = VALEURSPIECES[i];
-      console.log("Pièce choisi " + valeurPiece);
-      calculPiecesInsere(prixBoisson, valeurPiece);
+      console.log(boissonChoisi);
+      if (boissonChoisi == true) {
+        SONINSEREPIECE.play();
+        valeurPiece = VALEURSPIECES[i];
+        console.log("Pièce choisi " + valeurPiece);
+        calculPiecesInsere(prixBoisson, valeurPiece);
+      }
     });
   }
   return valeurPiece;
@@ -121,8 +127,8 @@ function calculPiecesInsere() {
   console.log("Prix boisson moins pièce inseré " + round(prixBoisson));
   if (round(prixBoisson) == 0 || round(prixBoisson) < 0) {
     animCafeEnCours();
-    setTimeout(affichageRemboursement, 5000);
     //Function qui affiche le remboursement selon certaines conditions
+    setTimeout(affichageRemboursement, 5000);
     function affichageRemboursement() {
       if (
         round(prixBoisson) == -2 ||
@@ -135,11 +141,29 @@ function calculPiecesInsere() {
       ) {
         SONREMBOURSEMENTUNEPIECE.play();
         PIECEREMBOURSEMENT1.classList.remove("none");
+        setTimeout(buvezVotreBoisson, 3000);
+        function buvezVotreBoisson() {
+          ECRAN.innerHTML = `
+          <p>Buvez vôtre boissson</p>
+          `;
+        }
       } else if (round(prixBoisson) == 0) {
+        setTimeout(buvezVotreBoisson, 3000);
+        function buvezVotreBoisson() {
+          ECRAN.innerHTML = `
+          <p>Buvez vôtre boissson</p>
+          `;
+        }
       } else {
         SONREMBOURSEMENT.play();
         PIECEREMBOURSEMENT1.classList.remove("none");
         PIECEREMBOURSEMENT2.classList.remove("none");
+        setTimeout(buvezVotreBoisson, 3000);
+        function buvezVotreBoisson() {
+          ECRAN.innerHTML = `
+          <p>Buvez vôtre boissson</p>
+          `;
+        }
       }
       ECRAN.innerHTML = `
       <p>Remboursement de ${Math.abs(round(prixBoisson))}€</p>
@@ -152,7 +176,7 @@ function calculPiecesInsere() {
   }
   return totaux;
 }
-
+// Animation du café
 function animCafeEnCours() {
   if (round(prixBoisson) == 0 || prixBoisson < 0) {
     SONCAFEENCOURS.play();
@@ -163,7 +187,7 @@ function animCafeEnCours() {
     `;
   }
 }
-
+// Son au clique sur le café plus rechargement de la page
 CAFE.addEventListener("click", () => {
   const RECHARGEPAGE = setTimeout(rechargePage, 5000);
   function rechargePage() {
@@ -173,5 +197,4 @@ CAFE.addEventListener("click", () => {
   CAFE.classList.add("none");
   CAFELIQUIDE.classList.add("none");
 });
-
-//test git hub
+//
